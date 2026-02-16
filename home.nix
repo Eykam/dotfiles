@@ -8,6 +8,7 @@ in
   home.homeDirectory = homeDirectory;
   home.stateVersion = "24.11";
 
+  nixpkgs.config.allowUnfree = true;
   programs.home-manager.enable = true;
 
   # ── Packages ────────────────────────────────────────────────────────
