@@ -17,7 +17,13 @@
     let
       mkHome = { system, username, homeDirectory, extraModules ? [] }:
         home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfreePredicate = pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [
+                "vscode"
+              ];
+          };
           modules = [
             ./home.nix
           ] ++ extraModules;
