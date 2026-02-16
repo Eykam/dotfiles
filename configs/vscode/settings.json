@@ -1,0 +1,46 @@
+{
+    "window.commandCenter": true,
+    "python.testing.pytestArgs": [
+        "tests", "-s", "--log-cli-level=INFO"
+    ],
+    // "python.analysis.extraPaths": ["/Users/ekamil/development/ar-analytics"],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "testing.automaticallyOpenTestResults": "neverOpen",
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Python: Current File",
+                "type": "debugpy",
+                "request": "launch",
+                "program": "${file}",
+                "console": "integratedTerminal",
+                "justMyCode": false,
+                "envFile": "${workspaceFolder}/.env",
+                "env": {
+                    "PYTHONPATH": "${workspaceFolder}"
+                }
+            },
+            {
+                "name": "Python: Debug Tests",
+                "type": "debugpy",
+                "request": "launch",
+                "program": "${file}",
+                "purpose": ["debug-test"],
+                "console": "integratedTerminal",
+                "justMyCode": false,
+                "envFile": "${workspaceFolder}/.env",
+                "env": {
+                    "PYTHONPATH": "${workspaceFolder}"
+                }
+            }
+        ]
+    },
+    "debug.console.collapseIdenticalLines": false,
+    "editor.minimap.enabled": false,
+    "workbench.colorTheme": "Catppuccin Noctis Frappé",
+    "debugpy.debugJustMyCode": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "claudeCode.preferredLocation": "panel"
+}

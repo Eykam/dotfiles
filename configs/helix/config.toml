@@ -1,0 +1,15 @@
+theme = "catppuccin_frappe"
+
+[editor]
+# Minimum severity to show a diagnostic after the end of a line:
+end-of-line-diagnostics = "hint"
+
+[editor.inline-diagnostics]
+# Minimum severity to show a diagnostic on the primary cursor's line.
+# Note that `cursor-line` diagnostics are hidden in insert mode.
+cursor-line = "error"
+
+[keys.normal]
+"C-m" = "signature_help"
+C-g = [":new", ":insert-output lazygit", ":buffer-close!", ":redraw"]
+
