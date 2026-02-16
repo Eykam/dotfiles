@@ -60,6 +60,11 @@ in
   programs.fish = {
     enable = true;
     shellInit = ''
+      # Load nix environment
+      if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+      end
+
       starship init fish | source
       direnv hook fish | source
       set -g direnv_fish_mode disable_arrow
