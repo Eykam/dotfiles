@@ -21,8 +21,11 @@
             inherit system;
             config.allowUnfreePredicate = pkg:
               builtins.elem (nixpkgs.lib.getName pkg) [
-                "vscode"
+                "claude-code"
+                "google-chrome"
                 "raycast"
+                "slack"
+                "vscode"
               ];
           };
           modules = [
