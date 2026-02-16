@@ -19,14 +19,7 @@
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
-            config.allowUnfreePredicate = pkg:
-              builtins.elem (nixpkgs.lib.getName pkg) [
-                "claude-code"
-                "google-chrome"
-                "raycast"
-                "slack"
-                "vscode"
-              ];
+            config.allowUnfree = true;
           };
           modules = [
             ./home.nix
