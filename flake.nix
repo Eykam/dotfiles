@@ -16,17 +16,21 @@
   outputs = { nixpkgs, home-manager, nix-vscode-extensions, ... }:
     let
       mkHome = { system, username, homeDirectory, extraModules ? [] }:
-        home-manager.lib.homeManagerConfiguration {
+        let
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
           };
+          # Re-evaluate extensions with our pkgs (allowUnfree enabled)
+          vscode-marketplace = (nix-vscode-extensions.overlays.default pkgs pkgs).vscode-marketplace;
+        in
+        home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
           modules = [
             ./home.nix
           ] ++ extraModules;
           extraSpecialArgs = {
-            inherit username homeDirectory;
-            vscode-marketplace = nix-vscode-extensions.extensions.${system}.vscode-marketplace;
+            inherit username homeDirectory vscode-marketplace;
           };
         };
     in
