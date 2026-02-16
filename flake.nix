@@ -22,6 +22,7 @@
             config.allowUnfreePredicate = pkg:
               builtins.elem (nixpkgs.lib.getName pkg) [
                 "vscode"
+                "raycast"
               ];
           };
           modules = [
