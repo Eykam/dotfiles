@@ -12,8 +12,9 @@ in
   home.activation.aliasApplications = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     app_dir="${homeDirectory}/Applications/Home Manager Apps"
     mkdir -p "$app_dir"
-    find -H "$genProfilePath/home-path/Applications" -maxdepth 1 -name "*.app" -type d -print0 2>/dev/null | while IFS= read -r -d "" app; do
-      app_name=$(basename "$app")
+    for app in "$genProfilePath/home-path/Applications/"*.app; do
+      [ -d "$app" ] || continue
+      app_name="$(basename "$app")"
       target="$app_dir/$app_name"
       rm -f "$target"
       /usr/bin/osascript -e "tell application \"Finder\" to make alias file to POSIX file \"$app\" at POSIX file \"$app_dir\"" || ln -sf "$app" "$target"
