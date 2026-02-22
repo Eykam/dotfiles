@@ -31,7 +31,18 @@ in
     delta
     bat
     jq
+    docker
+    docker-compose
+    tailscale
+    spotify
+    ranger
   ];
+
+  # ── Environment ───────────────────────────────────────────────────
+  home.sessionVariables = {
+    EDITOR = "hx";
+    VISUAL = "hx";
+  };
 
   # ── Git ─────────────────────────────────────────────────────────────
   programs.git = {
@@ -75,6 +86,7 @@ in
     };
     shellAliases = {
       debug-worktree = "${homeDirectory}/Development/tools/debug_worktree.sh";
+      hms = "home-manager switch --flake ~/.config/home-manager#darwin";
     };
   };
 
@@ -82,6 +94,37 @@ in
   programs.tmux = {
     enable = true;
     mouse = true;
+    terminal = "tmux-256color";
+    escapeTime = 5;
+    plugins = with pkgs.tmuxPlugins; [
+      sensible
+      {
+        plugin = power-theme;
+        extraConfig = "set -g @tmux_power_theme 'violet'";
+      }
+    ];
+    extraConfig = ''
+      set -ag terminal-overrides ",xterm-256color:RGB"
+      set -as terminal-features ",xterm-256color:RGB"
+      bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"
+      bind C-y display-popup \
+        -d "#{pane_current_path}" \
+        -w 80% \
+        -h 80% \
+        -E "lazygit"
+      bind C-n display-popup -E 'bash -i -c "read -p \"Session name: \" name; tmux new-session -d -s \$name && tmux switch-client -t \$name"'
+      bind C-j display-popup -E "tmux list-sessions | sed -E 's/:.*$//' | grep -v \"^$(tmux display-message -p '#S')\$\" | fzf --reverse | xargs tmux switch-client -t"
+      bind C-t display-popup \
+        -d "#{pane_current_path}" \
+        -w 75% \
+        -h 75% \
+        -E "fish"
+      bind a display-popup \
+        -d "${homeDirectory}/chats" \
+        -w 50% \
+        -h 50% \
+        -E "claude"
+    '';
   };
 
   # ── Direnv ──────────────────────────────────────────────────────────
@@ -116,6 +159,24 @@ in
     ];
   };
 
+  # ── Tailscale ──────────────────────────────────────────────────────
+  launchd.agents.tailscaled = {
+    enable = true;
+    config = {
+      Label = "com.tailscale.tailscaled";
+      ProgramArguments = [
+        "${pkgs.tailscale}/bin/tailscaled"
+        "--tun=userspace-networking"
+        "--state=${homeDirectory}/.local/share/tailscale/tailscaled.state"
+        "--socket=${homeDirectory}/.local/share/tailscale/tailscaled.sock"
+      ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      StandardOutPath = "${homeDirectory}/Library/Logs/tailscaled.stdout.log";
+      StandardErrorPath = "${homeDirectory}/Library/Logs/tailscaled.stderr.log";
+    };
+  };
+
   # ── Raw config files (symlinked, mutable) ───────────────────────────
   xdg.configFile = {
     "starship.toml" = {
@@ -126,6 +187,39 @@ in
     };
     "kitty/current-theme.conf" = {
       source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/current-theme.conf";
+    };
+    "kitty/themes/Catppuccin-Latte.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Catppuccin-Latte.conf";
+    };
+    "kitty/themes/Catppuccin-Mocha.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Catppuccin-Mocha.conf";
+    };
+    "kitty/themes/Cyberpunk-Edge.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Cyberpunk-Edge.conf";
+    };
+    "kitty/themes/Decay-Green.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Decay-Green.conf";
+    };
+    "kitty/themes/Frosted-Glass.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Frosted-Glass.conf";
+    };
+    "kitty/themes/Graphite-Mono.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Graphite-Mono.conf";
+    };
+    "kitty/themes/Gruvbox-Retro.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Gruvbox-Retro.conf";
+    };
+    "kitty/themes/Material-Sakura.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Material-Sakura.conf";
+    };
+    "kitty/themes/Rose-Pine.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Rose-Pine.conf";
+    };
+    "kitty/themes/Tokyo-Night.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Tokyo-Night.conf";
+    };
+    "kitty/themes/Wall-Dcol.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/kitty/themes/Wall-Dcol.conf";
     };
     "helix/config.toml" = {
       source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/helix/config.toml";
@@ -138,6 +232,12 @@ in
     };
     "btop/themes/nord.theme" = {
       source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/btop/nord.theme";
+    };
+    "ranger/rc.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/ranger/rc.conf";
+    };
+    "ranger/scope.sh" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${hmDir}/configs/ranger/scope.sh";
     };
   };
 }
